@@ -54,9 +54,7 @@ const Tablelist = ({ handleOpen }) => {
 								<td>
 									<button
 										className={`btn rounded-full w-20 ${
-											client.isActive
-												? `btn-primary`
-												: `btn-outline btn-primary`
+											client.isActive ? `btn-primary` : `btn-neutral`
 										}`}
 									>
 										{client.isActive ? 'Active' : 'Inactive'}

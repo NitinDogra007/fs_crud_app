@@ -8,6 +8,7 @@ function App() {
 	const [modalMode, setModalMode] = useState('add');
 
 	const handleOpen = (mode) => {
+		setModalMode(mode);
 		setIsOpen(true);
 	};
 
