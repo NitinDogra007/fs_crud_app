@@ -1,21 +1,8 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
-const Tablelist = ({ handleOpen, searchTerm }) => {
-	const [tableData, setTableData] = useState([]);
+const Tablelist = ({ handleOpen, searchTerm, tableData, setTableData }) => {
 	const [error, setError] = useState(null);
-
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const response = await axios.get('http://localhost:3000/api/clients');
-				setTableData(response.data);
-			} catch (error) {
-				setError(error.message);
-			}
-		};
-		fetchData();
-	}, []);
 
 	// Filter the tableDate based on the searchTerm
 	const filteredData = tableData.filter(
@@ -24,6 +11,22 @@ const Tablelist = ({ handleOpen, searchTerm }) => {
 			client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			client.job.toLowerCase().includes(searchTerm.toLowerCase())
 	);
+
+	const handleDelete = async (id) => {
+		const confirmDelete = window.confirm(
+			'Are you sure you want to delete this client?'
+		);
+		if (confirmDelete) {
+			try {
+				await axios.delete(`http://localhost:3000/api/clients/${id}`); // API call to delete client
+				setTableData((prevData) =>
+					prevData.filter((client) => client.id !== id)
+				); // Update state
+			} catch (err) {
+				setError(err.message); // Handle any errors
+			}
+		}
+	};
 
 	return (
 		<div className="m-4">
@@ -61,14 +64,19 @@ const Tablelist = ({ handleOpen, searchTerm }) => {
 								</td>
 								<td>
 									<button
-										onClick={() => handleOpen('edit')}
+										onClick={() => handleOpen('edit', client)}
 										className="btn btn-secondary"
 									>
 										Update
 									</button>
 								</td>
 								<td>
-									<button className="btn btn-accent">Delete</button>
+									<button
+										className="btn btn-accent"
+										onClick={() => handleDelete(client.id)}
+									>
+										Delete
+									</button>
 								</td>
 							</tr>
 						))}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const ModalForm = ({ isOpen, onClose, mode, onSubmit, clientData }) => {
 	const [rate, setRate] = useState('');
@@ -7,6 +7,22 @@ const ModalForm = ({ isOpen, onClose, mode, onSubmit, clientData }) => {
 	const [job, setJob] = useState('');
 	const [status, setStatus] = useState(false);
 
+	useEffect(() => {
+		if (mode === 'edit' && clientData) {
+			setName(clientData.name || '');
+			setEmail(clientData.email || '');
+			setJob(clientData.job || '');
+			setRate(clientData.rate || '');
+			setStatus(clientData.isactive ?? false);
+		} else if (mode === 'add') {
+			setName('');
+			setEmail('');
+			setJob('');
+			setRate('');
+			setStatus(false);
+		}
+	}, [mode, clientData]);
+
 	// Handle the change of status
 	const handleStatusChange = (e) => {
 		setStatus(e.target.value === 'Active'); // Set status as boolean
@@ -14,19 +30,26 @@ const ModalForm = ({ isOpen, onClose, mode, onSubmit, clientData }) => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+
+		if (!name.trim() || !email.trim() || !job.trim() || !rate) {
+			alert('All fields are required.');
+			return;
+		}
+
 		try {
-			const clientData = {
-				name,
-				email,
-				job,
+			const payload = {
+				name: name.trim(),
+				email: email.trim(),
+				job: job.trim(),
 				rate: Number(rate),
 				isactive: status,
 			};
-			await onSubmit(clientData);
+			await onSubmit(payload);
+			onClose();
 		} catch (error) {
-			console.error('Error adding client:', error);
+			console.error('Error submitting client:', error);
+			alert('Submission failed. Check console for details.');
 		}
-		onClose();
 	};
 
 	return (
