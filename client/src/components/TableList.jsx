@@ -1,35 +1,26 @@
-import React from 'react';
-
-let clients = [
-	{
-		id: 1,
-		name: 'John Doe',
-		email: 'johndoe@gmail.com',
-		job: 'Developer',
-		rate: '100',
-		isActive: true,
-	},
-	{
-		id: 2,
-		name: 'John1 Doe',
-		email: 'johndoe@gmail.com',
-		job: 'Developer1',
-		rate: '101',
-		isActive: true,
-	},
-	{
-		id: 3,
-		name: 'John2 Doe',
-		email: 'johndoe@gmail.com',
-		job: 'Developer2',
-		rate: '102',
-		isActive: false,
-	},
-];
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
 const Tablelist = ({ handleOpen }) => {
+	const [tableData, setTableData] = useState([]);
+	const [error, setError] = useState(null);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const response = await axios.get('http://localhost:3000/api/clients');
+				setTableData(response.data);
+			} catch (error) {
+				setError(error.message);
+			}
+		};
+		fetchData();
+	}, []);
+
 	return (
 		<div className="m-4">
+			{error && <div className="alert alert-error">{error}</div>}
+
 			<div className="overflow-x-auto ">
 				<table className="table">
 					{/* head */}
@@ -44,7 +35,7 @@ const Tablelist = ({ handleOpen }) => {
 						</tr>
 					</thead>
 					<tbody className="hover:bg-base-300">
-						{clients.map((client) => (
+						{tableData.map((client) => (
 							<tr>
 								<th>{client.id}</th>
 								<td>{client.name}</td>
@@ -54,10 +45,10 @@ const Tablelist = ({ handleOpen }) => {
 								<td>
 									<button
 										className={`btn rounded-full w-20 ${
-											client.isActive ? `btn-primary` : `btn-neutral`
+											client.isactive ? `btn-primary` : `btn-neutral`
 										}`}
 									>
-										{client.isActive ? 'Active' : 'Inactive'}
+										{client.isactive ? 'Active' : 'Inactive'}
 									</button>
 								</td>
 								<td>

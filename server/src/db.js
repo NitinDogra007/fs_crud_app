@@ -11,11 +11,12 @@ const db = new pg.Client({
 	port: process.env.PG_PORT,
 });
 
-db.connect();
-
-db.on('error', (err) => {
-	console.error('Unexpected error on idle client', err);
-	process.exit(-1);
+db.connect((err) => {
+	if (err) {
+		console.error('Failed to connect to PostgreSQL:', err.stack);
+	} else {
+		console.log('Connected to PostgreSQL');
+	}
 });
 
 export const query = (text, params) => db.query(text, params);
