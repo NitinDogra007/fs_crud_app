@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
-const Tablelist = ({ handleOpen }) => {
+const Tablelist = ({ handleOpen, searchTerm }) => {
 	const [tableData, setTableData] = useState([]);
 	const [error, setError] = useState(null);
 
@@ -16,6 +16,14 @@ const Tablelist = ({ handleOpen }) => {
 		};
 		fetchData();
 	}, []);
+
+	// Filter the tableDate based on the searchTerm
+	const filteredData = tableData.filter(
+		(client) =>
+			client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			client.job.toLowerCase().includes(searchTerm.toLowerCase())
+	);
 
 	return (
 		<div className="m-4">
@@ -35,8 +43,8 @@ const Tablelist = ({ handleOpen }) => {
 						</tr>
 					</thead>
 					<tbody className="hover:bg-base-300">
-						{tableData.map((client) => (
-							<tr>
+						{filteredData.map((client) => (
+							<tr key={client.id}>
 								<th>{client.id}</th>
 								<td>{client.name}</td>
 								<td>{client.email}</td>
