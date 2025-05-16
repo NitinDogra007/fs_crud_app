@@ -8,15 +8,24 @@ function App() {
 	const [isOpen, setIsOpen] = useState(false);
 	const [modalMode, setModalMode] = useState('add');
 	const [searchTerm, setSearchTerm] = useState('');
+	const [clientData, setClientData] = useState(null);
 
 	const handleOpen = (mode) => {
 		setModalMode(mode);
 		setIsOpen(true);
 	};
 
-	const handleSubmit = () => {
+	const handleSubmit = async (newClientData) => {
 		if (modalMode === 'add') {
-			console.log('modal mode Add');
+			try {
+				const response = await axios.post(
+					'http://localhost:3000/api/clients',
+					newClientData
+				);
+				console.log('Client added:', response.data);  // Log the response
+			} catch (error) {
+				console.error('Error adding client:', error)
+			}
 		} else {
 			console.log('Modal mode Edit');
 		}
@@ -31,6 +40,7 @@ function App() {
 				onSubmit={handleSubmit}
 				onClose={() => setIsOpen(false)}
 				mode={modalMode}
+				clientData={clientData}
 			/>
 		</>
 	);

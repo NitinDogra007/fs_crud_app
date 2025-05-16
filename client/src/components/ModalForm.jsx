@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const ModalForm = ({ isOpen, onClose, mode, onSubmit }) => {
+const ModalForm = ({ isOpen, onClose, mode, onSubmit, clientData }) => {
 	const [rate, setRate] = useState('');
 	const [name, setName] = useState('');
 	const [email, setEmail] = useState('');
@@ -12,8 +12,20 @@ const ModalForm = ({ isOpen, onClose, mode, onSubmit }) => {
 		setStatus(e.target.value === 'Active'); // Set status as boolean
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
+		try {
+			const clientData = {
+				name,
+				email,
+				job,
+				rate: Number(rate),
+				isactive: status,
+			};
+			await onSubmit(clientData);
+		} catch (error) {
+			console.error('Error adding client:', error);
+		}
 		onClose();
 	};
 
